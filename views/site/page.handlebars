@@ -1,4 +1,40 @@
 <h1>Flight List</h1>
+
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('myChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [
+            {{#each flights}} {{#each this.flights}}"{{date}}",{{/each}} {{/each}}],
+            datasets: [
+                {{#each flights}}
+                {
+                    label: "{{_id.currentDate}}",
+                    data: [{{#each this.flights}}{{price}},{{/each}}
+                    ],
+                    borderWidth: 1,
+                },
+                {{/each}}
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
 <div class="table-container">
     {{#each flights}}
     <div class="table">
@@ -6,20 +42,26 @@
         <table>
             <thead>
                 <tr>
+                    <th>Flight No</th>
+                    <th>Airline</th>
                     <th>City </th>
                     <th>Arrival City</th>
                     <th>Price</th>
                     <th>Currency</th>
+                     <th>Flight Time</th>
                     <th>Date</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each this.flights}}
                 <tr>
+                    <td>{{flightNo}}</td>
+                    <td>{{airline}}</td>
                     <td>{{city1}}</td>
                     <td>{{city2}}</td>
                     <td>{{price}}</td>
                     <td>{{currency}}</td>
+                    <td>{{flightTime}}</td>
                     <td>{{date}}</td>
                 </tr>
                 {{/each}}

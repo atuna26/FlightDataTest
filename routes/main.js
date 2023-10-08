@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
     },
     {
       $sort: {
-        'flights.date': 1 // date alanına göre artan sıralama
+        'flights.date': 1,'flights.flightTime':1, // date alanına göre artan sıralama
       }
     },
     {

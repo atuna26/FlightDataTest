@@ -11,7 +11,7 @@ const MongoStore = require("connect-mongo");
 const methodOverride = require("method-override");
 const helpers = require("handlebars-helpers");
 const moment = require("moment");
-const Flight = require("./models/Flight")
+const Flight = require("./models/Flight");
 const router = express.Router();
 
 mongoose.set("strictQuery", false);
@@ -87,136 +87,176 @@ app.set("view engine", "handlebars");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+function getFlightData(url, day, month, year, city1, city2) {
+  axios
+    .get(url + day + month + year)
+    .then((response) => {
+      if (response.status === 200) {
+        console.log(url + day + month + year);
+        const html = response.data;
+        const $ = cheerio.load(html);
+        const divsWithClass = $("#flights-table>tbody>tr");
+        // const otherDay = $(".alternative-day");
 
-function getFlightData(url,city1,city2) { axios
-  .get(url)
-  .then((response) => {
-    if (response.status === 200) {
-      const html = response.data;
-      const $ = cheerio.load(html);
-      const divsWithClass = $("#flights-table>tbody>tr");
-      const otherDay = $(".alternative-day");
+        const dataSameDay = [];
+        const dataOtherDay = [];
+        // console.log('------------------------');
+        // console.log('| Gün       | Fiyat  | Kur       ');
+        // console.log('------------------------');
 
-      const dataSameDay = [];
-      const dataOtherDay = [];
-      // console.log('------------------------');
-      // console.log('| Gün       | Fiyat  | Kur       ');
-      // console.log('------------------------');
+        divsWithClass.each((i, div) => {
+          let a = $(div).find(".flight-number").text().trim();
+          let b = $(div).find(".integers ").first().text().trim();
+          let c = $(div).find(".currency ").first().text().trim();
+          let d = $(div).find(".airline").text().trim();
+          let e = $(div)
+            .find(".flight-time")
+            .text()
+            .trim()
+            .replace("\n                            \t\t", " 🛫  ✈  🛬 ");
 
-      divsWithClass.each((i, div) => {
-        let a = $(div).find(".flight-number").text().trim();
-        let b = $(div).find(".integers ").first().text().trim();
-        let c = $(div).find(".currency ").first().text().trim();
-        let d = $(div).find(".airline").text().trim();
-        let e = $(div)
-          .find(".flight-time")
-          .text()
-          .trim()
-          .replace("\n                            \t\t", " 🛫  ✈  🛬 ");
+          if (a) {
+            dataSameDay.push({
+              flightNo: a,
+              flightTime: e,
+              price: b,
+              currency: c,
+              airline: d,
+            });
+            Flight.create({
+              flightNo: a,
+              flightTime: e,
+              price: b,
+              currency: c,
+              airline: d,
+              date: year + "." + month + day,
+              city1: city1,
+              city2: city2,
+            });
+          }
 
-        if (a) {
-          dataSameDay.push({
-            flightNo: a,
-            flighTime: e,
-            price: b,
-            currency: c,
-            airline: d,
-          });
-          
-        }
-
-        //  console.log(`| ${a} | ${b} | ${c} |`);
-      });
-      let sehir1= city1;
-      let sehir2= city2;
-      otherDay.each((i, div) => {
-        let a = $(div).find(".dayHeader").text().trim();
-        let b = $(div).find(".integers ").first().text().trim();
-        let c = $(div).find(".currency ").first().text().trim();
-
-
-        const parts = a.split(' ');
-        const day = parseInt(parts[0], 10);
-        const month = parts[1].substring(0, 3); // Ayın ilk üç harfi
-        const year = new Date().getFullYear(); // Yılı şu anki yıl olarak varsayalım
-        const dayString = day < 10 ? `0${day}` : day.toString();
-        const monthMap = {
-          'Eki': '10', // Ocak
-          'Kas': '11', // Şubat
-          'Ara': '12', // Mart
-          // Diğer ayları da ekleyin
-        };
-
-        const monthNumber = monthMap[month];
-        if (!monthNumber) {
-          console.error('Geçersiz ay:', month);
-          return;
-        }
-
-        const formattedDate = `${year}-${monthNumber}-${dayString}`;
-
-
-        dataOtherDay.push({
-          date: a,
-          price: b,
-          currency: c,
-          city1:city1,
-          city2:city2
+          //  console.log(`| ${a} | ${b} | ${c} |`);
         });
-        Flight.create({
-            date: formattedDate,
-            price: b,
-            currency: c,
-            city1:sehir1,
-            city2:sehir2,
-          })
-      });
-      // console.table(dataOtherDay)
-      console.log(
-        `------------------------${new Date().getDate()}.${
-          new Date().getMonth() + 1
-        }.${new Date().getFullYear()}------------------------`
-      );
-      // console.table(dataSameDay)
-      // console.log('------------------------');
-    } else {
-      console.error("HTTP isteği başarısız oldu");
+        let sehir1 = city1;
+        let sehir2 = city2;
+        // otherDay.each((i, div) => {
+        //   let a = $(div).find(".dayHeader").text().trim();
+        //   let b = $(div).find(".integers ").first().text().trim();
+        //   let c = $(div).find(".currency ").first().text().trim();
+
+        //   const parts = a.split(" ");
+        //   const day = parseInt(parts[0], 10);
+        //   const month = parts[1].substring(0, 3); // Ayın ilk üç harfi
+        //   const year = new Date().getFullYear(); // Yılı şu anki yıl olarak varsayalım
+        //   const dayString = day < 10 ? `0${day}` : day.toString();
+        //   const monthMap = {
+        //     Eki: "10", // Ocak
+        //     Kas: "11", // Şubat
+        //     Ara: "12", // Mart
+        //     // Diğer ayları da ekleyin
+        //   };
+
+        //   const monthNumber = monthMap[month];
+        //   if (!monthNumber) {
+        //     console.error("Geçersiz ay:", month);
+        //     return;
+        //   }
+
+        //   const formattedDate = `${year}-${monthNumber}-${dayString}`;
+
+        //   dataOtherDay.push({
+        //     date: a,
+        //     price: b,
+        //     currency: c,
+        //     city1: city1,
+        //     city2: city2,
+        //   });
+        //   // Flight.create({
+        //   //   date: formattedDate,
+        //   //   price: b,
+        //   //   currency: c,
+        //   //   city1: sehir1,
+        //   //   city2: sehir2,
+        //   // });
+        // });
+        // console.table(dataOtherDay)
+        console.log(
+          `------------------------${new Date().getDate()}.${
+            new Date().getMonth() + 1
+          }.${new Date().getFullYear()}------------------------`
+        );
+        // console.table(dataSameDay)
+        // console.log('------------------------');
+      } else {
+        console.error("HTTP isteği başarısız oldu");
+      }
+    })
+    .catch((error) => {
+      console.error("Hata:", error);
+    });
+}
+function konsolaYaz() {
+  console.log("kayıt");
+}
+
+function formatDay(day) {
+  if (day < 10) {
+    return `0${day}`;
+  }
+  return day.toString();
+}
+
+const days = [...Array(31).keys()].map((day) => formatDay(day + 1));
+const months = [10, 11, 12]; // 10, 11 ve 12 ayları
+const fromCity = "İstanbul";
+const toCity = "İzmir";
+const baseUrl =
+  "https://www.ucuzabilet.com/ic-hat-arama-sonuc?from=IST&to=ADB&ddate=";
+let currentIndex = 0; // İndeks takibi için
+
+function runInterval() {
+  for(let months=10; months <= 12; months ++) {
+    for (let day =1 ; day<=30; day++)  {
+      if(day<10){
+        day=`0${day}`;
+      }
+      getFlightData(`${baseUrl}`,`${day}.`,`${months}.`,`2023`, fromCity, toCity);
+      console.log(`${day}.`,`${months}.`,`2023`,)
     }
-  })
-  .catch((error) => {
-    console.error("Hata:", error);
-  });
-}
-function konsolaYaz(){
-    console.log("kayıt")
+  }
 }
 
+ setInterval(runInterval, 43200000);
 
-setInterval(() => {
-  getFlightData("https://www.ucuzabilet.com/ic-hat-arama-sonuc?from=IST&to=ADB&ddate=05.12.2023","İstanbul","İzmir");
-}, 10000);
+// // Tüm kombinasyonları oluştur
+/* for (const day of days) {
+   for (const month of months) {
+      //Her bir kombinasyon için bir setInterval oluştur
+     setInterval(() => {
+       getFlightData(`${baseUrl}`,`${day}.`,`${month}.`,`2023`, fromCity, toCity);
+     }, 60000);
+   }
+ }*/
 
-setInterval(() => {
-  getFlightData("https://www.ucuzabilet.com/ic-hat-arama-sonuc?from=IST&to=ADB&ddate=05.11.2023","İstanbul","İzmir");
-}, 25000);
+// setInterval(() => {
+//    getFlightData("https://www.ucuzabilet.com/ic-hat-arama-sonuc?from=IST&to=ADB&ddate=05.11.2023","İstanbul","İzmir");
+// }, 10000);
 
-setInterval(() => {
-  getFlightData("https://www.ucuzabilet.com/ic-hat-arama-sonuc?from=IST&to=ADB&ddate=10.10.2023","İstanbul","İzmir");
-}, 32000);
+// setInterval(() => {
+//   getFlightData("https://www.ucuzabilet.com/ic-hat-arama-sonuc?from=IST&to=ADB&ddate=10.10.2023","İstanbul","İzmir");
+//  }, 10000);
 
-setInterval(() => {
-  getFlightData("https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=05.12.2023&adult=1","İstanbul","Londra");
-}, 10000);
+// setInterval(() => {
+//   getFlightData("https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=05.12.2023&adult=1","İstanbul","Londra");
+// }, 10000);
 
+// setInterval(() => {
+//   getFlightData("https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=05.11.2023&adult=1","İstanbul","Londra");
+// }, 25000);
 
-setInterval(() => {
-  getFlightData("https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=05.11.2023&adult=1","İstanbul","Londra");
-}, 25000);
-
-setInterval(() => {
-  getFlightData("https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=10.10.2023&adult=1","İstanbul","Londra");
-}, 32000);
-
+// setInterval(() => {
+//   getFlightData("https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=10.10.2023&adult=1","İstanbul","Londra");
+// }, 32000);
 
 app.use((req, res, next) => {
   const main = require("./routes/main");

@@ -1,0 +1,30 @@
+<h1>Flight List</h1>
+<div class="table-container">
+    {{#each flights}}
+    <div class="table">
+        <h2>Date: {{_id.currentDate}}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>City </th>
+                    <th>Arrival City</th>
+                    <th>Price</th>
+                    <th>Currency</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each this.flights}}
+                <tr>
+                    <td>{{city1}}</td>
+                    <td>{{city2}}</td>
+                    <td>{{price}}</td>
+                    <td>{{currency}}</td>
+                    <td>{{date}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    {{/each}}
+</div>

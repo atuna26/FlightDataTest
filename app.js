@@ -219,7 +219,7 @@ function runInterval() {
         console.log(`${day}.`,`${months}.`,`2023`,)
         getFlightData(`${baseUrl}`,`${day}.`,`${months}.`,`2023`, fromCity, toCity);
         console.log(`${day}.`,`${months}.`,`2023`,)
-      }, (months - 10) * 30 * 1000 + (day - 1) * 5000);
+      }, (months - 10) * 30 * 1000 + (day - 1) * 7500);
     }
   }
 }

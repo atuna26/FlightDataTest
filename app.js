@@ -113,11 +113,8 @@ function getFlightData(url, day, month, year, city1, city2) {
           let b = $(div).find(".integers ").first().text().trim();
           let c = $(div).find(".currency ").first().text().trim();
           let d = $(div).find(".airline").text().trim();
-          let e = $(div)
-            .find(".flight-time")
-            .text()
-            .trim()
-          e = e.slice(0,5)+" " + e.slice(5)
+          let e = $(div).find(".flight-time").text().trim().replace("\n                            \t\t", "")
+          e = e.slice(0,5)+"/"+ e.slice(5)
 
           if (a) {
             dataSameDay.push({
@@ -203,15 +200,6 @@ function konsolaYaz() {
   console.log("kayıt");
 }
 
-function formatDay(day) {
-  if (day < 10) {
-    return `0${day}`;
-  }
-  return day.toString();
-}
-
-const days = [...Array(31).keys()].map((day) => formatDay(day + 1));
-const months = [10, 11, 12]; // 10, 11 ve 12 ayları
 const fromCity = "İstanbul";
 const toCity = "İzmir";
 const baseUrl =

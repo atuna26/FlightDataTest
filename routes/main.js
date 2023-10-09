@@ -45,7 +45,7 @@ router.get('/', (req, res) => {
 });
 
 router.get("/grafik/:city2/:time1/:time2/:date/",(req,res)=>{
-  Flight.find({city2:req.params.city2,flightTime:req.params.time1+" "+req.params.time2,date:req.params.date}).lean().then(flight=>{
+  Flight.find({city2:req.params.city2,flightTime:req.params.time1+"/"+req.params.time2,date:req.params.date}).lean().then(flight=>{
     res.render("site/grafik",{flights:flight})
   })
 })

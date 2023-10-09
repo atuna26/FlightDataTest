@@ -221,17 +221,23 @@ const baseUrl =
 let currentIndex = 0; // İndeks takibi için
 
 function runInterval() {
- 
+  for(let months=10; months <= 12; months ++) {
+    for (let day =1 ; day<=30; day++)  {
+      if(day<10){
+        day=`0${day}`;
+      }
       setTimeout(() => {
-        getFlightData(`${anotherUrl}`,`10.`,`10.`,`2023`, "İstanbul", "Londra");
-       
-   
-      }, 1000);
+        getFlightData(`${anotherUrl}`,`${day}.`,`${months}.`,`2023`, "İstanbul", "Londra");
+        console.log(`${day}.`,`${months}.`,`2023`,)
+        getFlightData(`${baseUrl}`,`${day}.`,`${months}.`,`2023`, fromCity, toCity);
+        console.log(`${day}.`,`${months}.`,`2023`,)
+      }, (months - 10) * 30 * 1000 + (day - 1) * 5000);
     }
- 
+  }
+}
 
-//  runInterval();
-//  setInterval(runInterval, 43200000);
+runInterval();
+setInterval(runInterval, 43200000);
 
 // // Tüm kombinasyonları oluştur
 /* for (const day of days) {

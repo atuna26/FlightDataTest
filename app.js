@@ -41,6 +41,10 @@ app.use(methodOverride("_method"));
 
 const hbs = exphbs.create({
   helpers: {
+    trim: function(e){
+      let newText = e.slice(0,5)+e.slice(6)
+      return newText.slice(0,5)+"/"+newText.slice(5)
+    },
     any: function () {
       let options = arguments[arguments.length - 1];
       let args = Array.prototype.slice.call(arguments, 0, -1);
@@ -113,7 +117,7 @@ function getFlightData(url, day, month, year, city1, city2) {
             .find(".flight-time")
             .text()
             .trim()
-            .replace("\n                            \t\t", " 🛫  ✈  🛬 ");
+          e = e.slice(0,5)+" " + e.slice(5)
 
           if (a) {
             dataSameDay.push({
@@ -212,21 +216,22 @@ const fromCity = "İstanbul";
 const toCity = "İzmir";
 const baseUrl =
   "https://www.ucuzabilet.com/ic-hat-arama-sonuc?from=IST&to=ADB&ddate=";
+  const anotherUrl =
+  "https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=";
 let currentIndex = 0; // İndeks takibi için
 
 function runInterval() {
-  for(let months=10; months <= 12; months ++) {
-    for (let day =1 ; day<=30; day++)  {
-      if(day<10){
-        day=`0${day}`;
-      }
-      getFlightData(`${baseUrl}`,`${day}.`,`${months}.`,`2023`, fromCity, toCity);
-      console.log(`${day}.`,`${months}.`,`2023`,)
+ 
+      setTimeout(() => {
+        getFlightData(`${anotherUrl}`,`10.`,`10.`,`2023`, "İstanbul", "Londra");
+       
+   
+      }, 1000);
     }
-  }
-}
+ 
 
- setInterval(runInterval, 43200000);
+//  runInterval();
+//  setInterval(runInterval, 43200000);
 
 // // Tüm kombinasyonları oluştur
 /* for (const day of days) {

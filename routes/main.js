@@ -44,5 +44,14 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get("/grafik/:city2/:time1/:time2/:date/",(req,res)=>{
+  Flight.find({city2:req.params.city2,flightTime:req.params.time1+" "+req.params.time2,date:req.params.date}).lean().then(flight=>{
+    res.render("site/grafik",{flights:flight})
+  })
+})
+
+router.post("/grafikTest",(req,res)=>{
+  res.redirect(req.body.date)
+})
 
 module.exports = router;

@@ -4,18 +4,15 @@
 
     <select  name="date" id="">
         {{#each flights}}
-            {{#each this.flights}} 
             <option value="/grafik/{{city2}}/{{trim flightTime}}/{{date}}/">{{city2}} {{trim flightTime}} {{date}} </option>
-            {{/each}}
         {{/each}}
     </select>
     <button type="submit">Git</button>
 </form>
 
 <div class="table-container">
-    {{#each flights}}
     <div class="table">
-        <h2>Date: {{_id.currentDate}}</h2>
+        <h2>Date: {{currentDate}}</h2>
         <table>
             <thead>
                 <tr>
@@ -30,7 +27,8 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each this.flights}}
+                    {{#each flights}}
+
                 <tr>
                     <td>{{flightNo}}</td>
                     <td>{{airline}}</td>
@@ -41,9 +39,9 @@
                     <td>{{flightTime}}</td>
                     <td>{{date}}</td>
                 </tr>
-                {{/each}}
+                    {{/each}}
+
             </tbody>
         </table>
     </div>
-    {{/each}}
 </div>

@@ -224,7 +224,6 @@ function runInterval() {
   }
 }
 
-runInterval();
 setInterval(runInterval, 43200000);
 
 // // Tüm kombinasyonları oluştur

@@ -1,0 +1,92 @@
+<div class="container-fluid my-3">
+    <div class="row page-titles mx-0">
+        <div class="col-sm-6 p-md-0">
+            <div class="welcome-text">
+                <h4>Flight Data</h4>
+                <p class="mb-0">Flight Data Demo</p>
+            </div>
+        </div>
+        <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <form action="/grafikTest" method="POST">
+                <select name="date" id="">
+                    {{#each flights}}
+                     {{#each this.flights}}
+                    <option value="/grafik/{{this.city2}}/{{trim this.flightTime}}/{{this.date}}/">{{this.city2}} {{trim this.flightTime}}
+                        {{this.date}} </option>
+                    {{/each}}
+                    {{/each}}
+                </select>
+                <button type="submit">Git</button>
+            </form>
+        </div>
+    </div>
+    <!-- row -->
+
+    <div class="row">
+        {{#each flights}}
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{this._id.city1}} - {{this._id.city2}} ({{this._id.currentDate}})</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th>Flight No</th>
+                                    <th>Airline</th>
+                                    <th>City </th>
+                                    <th>Arrival City</th>
+                                    <th>Price</th>
+                                    <th>Currency</th>
+                                    <th>Flight Time</th>
+                                    <th>Date</th>
+                                    <th>Show Chart</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {{#each this.flights}}
+
+                                <tr>
+                                    <td>{{this.flightNo}}</td>
+                                    <td>{{this.airline}}</td>
+                                    <td>{{this.city1}}</td>
+                                    <td>{{this.city2}}</td>
+                                    <td>{{this.price}}</td>
+                                    <td>{{this.currency}}</td>
+                                    <td>{{this.flightTime}}</td>
+                                    <td>{{this.date}}</td>
+                                    <td><a href="/grafik/{{this.city2}}/{{trim this.flightTime}}/{{this.date}}/" class="badge light badge-success">SHOW</a></td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /# card -->
+        </div>
+        {{/each}}
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination pagination-xl pagination-gutter pagination-info">
+                {{#paginate page=page totalPages=totalPages}}
+                {{/paginate}}
+                {{!-- <li class="page-item page-indicator">
+                    <a class="page-link">
+                        <i class="la la-angle-left"></i></a>
+                </li>
+                <li class="page-item active"><a class="page-link">1</a>
+                </li>
+                <li class="page-item"><a class="page-link">2</a></li>
+                <li class="page-item"><a class="page-link">3</a></li>
+                <li class="page-item"><a class="page-link">4</a></li>
+                <li class="page-item page-indicator">
+                    <a class="page-link">
+                        <i class="la la-angle-right"></i></a>
+                </li> --}}
+            </ul>
+        </nav>
+    </div>
+</div>

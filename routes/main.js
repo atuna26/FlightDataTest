@@ -63,15 +63,33 @@ router.get('/flightPage', (req, res) => {
     });
 });
 
-router.get('/', (req, res) => {
-
-  const page = req.query.page || 0
-  const flightsPerPage = 1500
-
-
-  Flight.find({}).skip(page*flightsPerPage).limit(flightsPerPage).sort({ date: 1, flightTime: 1 }).lean()
+router.get('/', async (req, res) => {
+  const page = req.query.page || 0;
+  const flightsPerPage = 150; 
+  const totalFlights = await Flight.countDocuments();
+  Flight.aggregate([
+    {
+      $sort: { date: 1, flightTime: 1 }
+    },
+    {
+      $skip: page * flightsPerPage
+    },
+    {
+      $limit: flightsPerPage
+    },
+    {
+      $group: {
+        _id: {
+          currentDate: '$currentDate',
+          city1: '$city1',
+          city2: '$city2'
+        },
+        flights: { $push: '$$ROOT' },
+      },
+    },
+  ]).exec()
     .then((result) => {
-      res.render('site/page', { flights: result });
+      res.render('site/index', { flights: result , page, totalPages: Math.ceil(totalFlights / flightsPerPage)});
     })
     .catch((err) => {
       console.error(err);

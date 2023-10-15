@@ -82,11 +82,49 @@ const hbs = exphbs.create({
     moment: function (date) {
       return moment(date).format("YYYY-MM-DD");
     },
+    momentHours: function (date) {
+      return moment(date).format("YYYY-MM-DD - HH.MM");
+    },
+    paginate: function (options) {
+      console.log(options)
+      let outputHTML = ""
+      if(parseInt(options.hash.page) === 1){
+        outputHTML += `<li class="page-item disabled"><a href="/" class="page-link">1</a></li>`
+      }else{
+        outputHTML += `<li class="page-item page-indicator">
+        <a class="page-link" href="/">
+            <i class="la la-angle-left"></i> <i class="la la-angle-left"></i></a>
+    </li>`
+      }
+
+      let i = (Number(options.hash.page) > 5 ? Number(options.hash.page) -4 :1 )
+
+      if( i!==1){
+        outputHTML += `<li class="page-item disabled"><a href="/" class="page-link">...</a></li>`
+      }
+      for (; i<= (Number(options.hash.page)+4) && i<= options.hash.totalPages; i++){
+        if (i === options.hash.page){
+          outputHTML += ` <li class="page-item active"><a href="/" class="page-link">${i}</a></li>`
+        }else{
+          outputHTML += ` <li class="page-item"><a href="/?page=${i}" class="page-link">${i}</a></li>`
+        }
+      }
+      if(i<options.hash.totalPages){
+        outputHTML += ` <li class="page-item page-indicator">
+        <a  href="/?page=693}" class="page-link">
+            <i class="la la-angle-right"></i><i class="la la-angle-right"></i></a>
+    </li>`
+      }
+
+      return outputHTML;
+    }
   },
 });
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
+
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -255,6 +293,9 @@ setInterval(runInterval, 43200000);
 // setInterval(() => {
 //   getFlightData("https://www.ucuzabilet.com/dis-hat-arama-sonuc?from=IST&to=LHR&ddate=10.10.2023&adult=1","İstanbul","Londra");
 // }, 32000);
+
+
+
 
 app.use((req, res, next) => {
   const main = require("./routes/main");

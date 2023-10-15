@@ -1,10 +1,29 @@
-<h1>Flight List</h1>
-
-<div>
-    <canvas id="myChart"></canvas>
+ <div class="welcome-text">
+    <h1><a href="/">Flight Data</a></h1>
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<div class="container-fluid my-3">
+    <div class="row page-titles mx-0">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Price Chart</h4>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
 <script>
     const ctx = document.getElementById('myChart');
@@ -13,56 +32,81 @@
         type: 'line',
         data: {
             labels: [
-            {{#each flights}} "{{currentDate}}",{{/each}}],
-            datasets: [
-                {
-                    label: "Fiyat Verileri",
-                    data: [{{#each flights}} {{price}}, {{/each}}],
-                    borderWidth: 1,
+                {{#each flights }} "{{momentHours currentDate}}",{{/each}}],
+        datasets: [
+        {
+            label: "Fiyat Verileri",
+            data: [{{#each flights }} {{price}}, {{/each}}],
+        borderWidth: 1,
                 },
             ]
         },
         options: {
-            scales: {
-                y: {
+        scales: {
+             y: {
                     beginAtZero: true
                 }
-            }
+
         }
+    }
     });
 </script>
-{{#each flights}}  {{this.flights}} {{/each}}
-<div class="table-container">
-    {{#each flights}}
-    <div class="table">
-        <h2>Date: {{currentDate}}</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Flight No</th>
-                    <th>Airline</th>
-                    <th>City </th>
-                    <th>Arrival City</th>
-                    <th>Price</th>
-                    <th>Currency</th>
-                     <th>Flight Time</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-            
-                <tr>
-                    <td>{{flightNo}}</td>
-                    <td>{{airline}}</td>
-                    <td>{{city1}}</td>
-                    <td>{{city2}}</td>
-                    <td>{{price}}</td>
-                    <td>{{currency}}</td>
-                    <td>{{flightTime}}</td>
-                    <td>{{date}}</td>
-                </tr>
-            </tbody>
-        </table>
+{{#each flights}} {{this.flights}} {{/each}}
+
+
+<div class="container-fluid my-3">
+    <div class="row page-titles mx-0">
+        <div class="col-sm-6 p-md-0">
+            <div class="welcome-text">
+                <h4>Flight Data</h4>
+                <p class="mb-0">Flight Data Demo</p>
+            </div>
+        </div>
     </div>
-    {{/each}}
+    <!-- row -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th>Flight No</th>
+                                    <th>Airline</th>
+                                    <th>City </th>
+                                    <th>Arrival City</th>
+                                    <th>Price</th>
+                                    <th>Currency</th>
+                                    <th>Flight Time</th>
+                                    <th>Date</th>
+                                    <th class="text-center">Get Data Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each flights}}
+                                <tr>
+                                    <td>{{flightNo}}</td>
+                                    <td>{{airline}}</td>
+                                    <td>{{city1}}</td>
+                                    <td>{{city2}}</td>
+                                    <td>{{price}}</td>
+                                    <td>{{currency}}</td>
+                                    <td>{{flightTime}}</td>
+                                    <td>{{date}}</td>
+                                    <td class="text-center">{{momentHours currentDate}}</td>
+                                </tr>
+                                {{/each}}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /# card -->
+        </div>
+    </div>
 </div>
